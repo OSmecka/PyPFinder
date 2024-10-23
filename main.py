@@ -5,27 +5,17 @@ import numpy as np
 
 #-------------------------------------------------------------------input start---------------------------------------------------------------
 
-obj = "TIC 120495323"
+obj = #STR name of the target ffrom TESS or Kepler catalogue 
+sector = #STR TESS sector of observation
+author = #STR Preparation pipeline used as data author
 
-lc = lk.search_lightcurve(obj)
-print(lc)
-
-sektory = int(input("#>"))
-
-pg = float(4.866236)
-
-
-lc = lk.search_lightcurve(obj)[sektory].download()
-time_beggening = int(input("t0"))
-time_end = int(input("tmax"))
+lc = lk.search_lightcurve(obj, sector=sector, author=author)[0].download()
+time_beggening = int(input("t0")) # Chosen starting time for given lightcurve
+time_end = int(input("tmax")) # Chosen endtime for given lightcurve
 if time_end == 0:
     time_end = 999999999999
 else:
-    time_end = time_end
-    
-#-------------------------------------------------------------------input end------------------------------------------------------------------
- 
-    
+    time_end = time_end 
 #-----------------------------------------------------------------data frame body--------------------------------------------------------------
     
 lc.to_csv("CSV/raw_data.csv", overwrite = True)
@@ -47,7 +37,6 @@ lc_data["delta P from P0"] = lc_data["time by Pg"] - P0
 lc_data["nPeriod"] = lc_data["delta P from P0"].apply(np.floor)
     
 lc_data.to_csv("CSV/lc_dataframe.csv")
-    
 #------------------------------------------------------------------datafilter----------------------------------------------------------------
     
 df = pd.DataFrame(list())
@@ -63,7 +52,6 @@ filter["time by Pg"] = lc_data["time by Pg"]
 filter["nPeriod"] = lc_data["nPeriod"]
     
 filter.to_csv("CSV/lc_filter.csv")
-    
 #--------------------------------------------------------------Period separator-------------------------------------------------------------
 df = filter
 unique_categories = df['nPeriod'].unique()
@@ -78,7 +66,6 @@ for category in unique_categories:
 for category, category_df in dataframes_by_category.items():
     file_name = f"CSV/Periods/Period {category}.csv"
     category_df.to_csv(file_name, index=False)
-
 #----------------------------------------------------------------Period Finder-----------------------------------------------------------
     
 n = int(filter["nPeriod"].max())
